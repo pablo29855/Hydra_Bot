@@ -22,18 +22,23 @@ FFMPEG_OPTIONS = {
 }
 
 def get_audio_url(query):
-    """Obtiene la mejor URL de audio posible en máxima calidad."""
+    """Obtiene la mejor URL de audio posible en máxima calidad, usando cookies si es necesario."""
     ydl_opts = {
         'format': 'bestaudio[ext=webm]/bestaudio/best',
         'quiet': True,
         'default_search': 'ytsearch' if not query.startswith("http") else None,
-        'noplaylist': True
+        'noplaylist': True,
+        'cookies': 'cookies.txt',
     }
-    with yt_dlp.YoutubeDL(ydl_opts) as ydl:
-        info = ydl.extract_info(query, download=False)
-        if 'entries' in info:
-            info = info['entries'][0]
-        return info.get('url')
+    try:
+        with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+            info = ydl.extract_info(query, download=False)
+            if 'entries' in info:
+                info = info['entries'][0]
+            return info.get('url')
+    except yt_dlp.utils.DownloadError as e:
+        print(f"Error al obtener el audio: {e}")
+        return None
 
 async def play_next(interaction: discord.Interaction):
     """Reproduce la siguiente canción en la cola."""
