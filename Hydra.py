@@ -28,7 +28,6 @@ def get_audio_url(query):
         'quiet': True,
         'default_search': 'ytsearch' if not query.startswith("http") else None,
         'noplaylist': True,
-        'cookies': 'cookies.txt',
     }
     try:
         with yt_dlp.YoutubeDL(ydl_opts) as ydl:
